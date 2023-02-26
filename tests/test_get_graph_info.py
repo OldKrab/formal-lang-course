@@ -11,12 +11,12 @@ def teardown_module(module):
 
 
 def test_ls():
-    expected = (1687, 1453, {'d', 'a'})
+    expected = (1687, 1453, {"d", "a"})
     actual = graph_utils.get_graph_info("ls")
     assert expected == actual
 
+
 def test_gzip():
-    expected = (2687, 2293, {'a', 'd'})
+    expected = (2687, 2293, {"a", "d"})
     actual = graph_utils.get_graph_info("gzip")
     assert expected == actual
-

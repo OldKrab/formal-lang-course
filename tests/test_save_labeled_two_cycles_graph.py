@@ -1,4 +1,5 @@
 import pytest
+
 # on import will print something from __init__ file
 import project.graph_utils as graph_utils
 import os
@@ -14,7 +15,7 @@ def teardown_module(module):
 
 def test_s():
     path = "test.txt"
-    labels = ('boob', 'loop')
+    labels = ("boob", "loop")
     n, m = 2, 3
 
     graph_utils.save_labeled_two_cycles_graph(n, m, labels, path)
