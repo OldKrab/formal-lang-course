@@ -1,7 +1,8 @@
+from collections import namedtuple
 import cfpq_data
 import networkx.classes.multidigraph as nx_mdg
 import networkx.drawing.nx_pydot as nx_pydot
-from typing import Set, Tuple
+from typing import Set, NamedTuple, Tuple
 
 
 def _load_graph(name: str) -> nx_mdg.MultiDiGraph:
@@ -21,12 +22,18 @@ def _get_graph_unique_labels(gr: nx_mdg.MultiDiGraph) -> Set[str]:
     return {data["label"] for (_, _, data) in gr.edges(data=True)}
 
 
-def get_graph_info(name: str) -> Tuple[int, int, Set[str]]:
+GraphInfo = NamedTuple(
+    "GraphInfo",
+    [("vertexes_count", int), ("edges_count", int), ("unique_labels", Set[str])],
+)
+
+
+def get_graph_info(name: str) -> GraphInfo:
     graph = _load_graph(name)
-    return (
-        _get_graph_vertexes_number(graph),
-        _get_graph_edges_number(graph),
-        _get_graph_unique_labels(graph),
+    return GraphInfo(
+        vertexes_count=_get_graph_vertexes_number(graph),
+        edges_count=_get_graph_edges_number(graph),
+        unique_labels=_get_graph_unique_labels(graph),
     )
 
 
