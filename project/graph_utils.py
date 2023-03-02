@@ -1,7 +1,7 @@
 import cfpq_data
 import networkx as nx
 import networkx.drawing.nx_pydot as nx_pydot
-from typing import Any, Iterable, Set, NamedTuple, Tuple
+from typing import Any, Iterable, Set, NamedTuple, Tuple, Union
 import pyformlang.finite_automaton as fa
 import pyformlang.regular_expression as re
 
@@ -51,8 +51,8 @@ def build_min_dfa_from_regex(regex_str: str) -> fa.DeterministicFiniteAutomaton:
 
 def convert_nx_graph_to_nfa(
     nx_graph: nx.MultiDiGraph,
-    start_states: Iterable[Any] | None = None,
-    final_states: Iterable[Any] | None = None,
+    start_states: Union[Iterable[Any], None] = None,
+    final_states: Union[Iterable[Any], None] = None,
 ) -> fa.NondeterministicFiniteAutomaton:
     nfa = fa.FiniteAutomaton.from_networkx(nx_graph).remove_epsilon_transitions()
     if start_states is None:
