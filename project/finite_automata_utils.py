@@ -128,3 +128,18 @@ def query_regex_to_fa(db_fa: EpsilonNFA, query: str) -> Set[Tuple[State, State]]
             if not db_pair in result:
                 result.add(db_pair)
     return result
+
+
+def query_regex_to_fa_with_states(
+    db_fa: EpsilonNFA, start_states: Set[Any], final_states: Set[Any], query: str
+) -> Set[Tuple[State, State]]:
+    """
+    Execute query regex to finite automaton with given start and final states.
+    Return all pairs of start and final states of fa that form word corresponding to the regex.
+    """
+    db_fa = db_fa.copy()
+    for start_state in start_states:
+        db_fa.add_start_state(start_state)
+    for final_state in final_states:
+        db_fa.add_final_state(final_state)
+    return query_regex_to_fa(db_fa, query)
