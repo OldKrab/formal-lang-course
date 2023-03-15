@@ -131,15 +131,16 @@ def query_regex_to_fa(db_fa: EpsilonNFA, query: str) -> Set[Tuple[State, State]]
 
 
 def query_regex_to_fa_with_states(
-    db_fa: EpsilonNFA, start_states: Set[Any], final_states: Set[Any], query: str
+    db_graph: nx.MultiDiGraph,
+    query: str,
+    start_states: Union[Iterable[Any], None] = None,
+    final_states: Union[Iterable[Any], None] = None,
 ) -> Set[Tuple[State, State]]:
     """
     Execute query regex to finite automaton with given start and final states.
     Return all pairs of start and final states of fa that form word corresponding to the regex.
     """
-    db_fa = db_fa.copy()
-    for start_state in start_states:
-        db_fa.add_start_state(start_state)
-    for final_state in final_states:
-        db_fa.add_final_state(final_state)
-    return query_regex_to_fa(db_fa, query)
+
+    return query_regex_to_fa(
+        convert_nx_graph_to_nfa(db_graph, start_states, final_states), query
+    )
