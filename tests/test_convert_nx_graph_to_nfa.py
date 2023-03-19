@@ -1,5 +1,5 @@
 import pytest
-from project.graph_utils import *  # on import will print something from __init__ file
+from project.finite_automata_utils import *  # on import will print something from __init__ file
 
 
 def setup_module(module):
