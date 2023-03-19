@@ -231,4 +231,4 @@ def find_reachable_in_graph_from_each(
     query_fa = build_min_dfa_from_regex(regex)
     res = find_reachable_in_fa_from_each(db_fa, query_fa, db_start_states)
     final_set = set(db_final_states)
-    return {start: states.intersection(final_set) for start, states in res}
+    return {start: states.intersection(final_set) for start, states in res.items()}
