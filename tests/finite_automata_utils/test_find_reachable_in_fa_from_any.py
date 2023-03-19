@@ -19,10 +19,7 @@ def test_simple_path():
     fa = EpsilonNFA()
     fa.add_transitions([(1, "a", 3), (3, "b", 4), (4, "a", 3)])
 
-    query = EpsilonNFA()
-    query.add_transitions([(0, "a", 1), (1, "b", 2), (2, "a", 3)])
-    query.add_start_state(0)
-    query.add_final_state(3)
+    query = "aba"
     actual = find_reachable_in_fa_from_any(fa, query, [1])
     excepted = {3}
     assert actual == excepted
@@ -32,11 +29,7 @@ def test_loop():
     fa = EpsilonNFA()
     fa.add_transitions([(1, "a", 3), (3, "b", 4), (4, "a", 3)])
 
-    query = EpsilonNFA()
-    query.add_transitions([(0, "a", 1), (1, "b", 2), (2, "a", 1)])
-    query.add_start_state(0)
-    query.add_final_state(1)
-    query.add_final_state(2)
+    query = "(ab?)+"
     actual = find_reachable_in_fa_from_any(fa, query, [1])
     excepted = {3, 4}
     assert actual == excepted
@@ -46,10 +39,7 @@ def test_fork():
     fa = EpsilonNFA()
     fa.add_transitions([(1, "a", 2), (2, "b", 3), (1, "a", 4), (4, "c", 5)])
 
-    query = EpsilonNFA()
-    query.add_transitions([(0, "a", 1), (1, "b", 2)])
-    query.add_start_state(0)
-    query.add_final_state(2)
+    query = "ab"
     actual = find_reachable_in_fa_from_any(fa, query, [1])
     excepted = {3}
     assert actual == excepted
@@ -59,10 +49,7 @@ def test_multiple_starts():
     fa = EpsilonNFA()
     fa.add_transitions([(1, "a", 2), (2, "b", 3), (4, "a", 5), (5, "b", 6)])
 
-    query = EpsilonNFA()
-    query.add_transitions([(0, "a", 1), (1, "b", 2)])
-    query.add_start_state(0)
-    query.add_final_state(2)
+    query = "ab"
     actual = find_reachable_in_fa_from_any(fa, query, [1, 4])
     excepted = {3, 6}
     assert actual == excepted

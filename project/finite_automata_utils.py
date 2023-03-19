@@ -147,8 +147,13 @@ def query_regex_to_fa_with_states(
 
 
 def find_reachable_in_fa_from_any(
-    db_fa: EpsilonNFA, query_fa: EpsilonNFA, db_start_states: Iterable[Any]
+    db_fa: EpsilonNFA, regex: str, db_start_states: Iterable[Any]
 ) -> Set[Any]:
+    """
+    Execute query regex to finite automaton.
+    Return all reachable states from given db_start_states.
+    """
+    query_fa = build_min_dfa_from_regex(regex)
     db_matrices, db_state_idx = _get_bool_matrices_for_fa(db_fa)
     query_matrices, query_state_idx = _get_bool_matrices_for_fa(query_fa)
     db_cnt = len(db_fa.states)
@@ -201,10 +206,14 @@ def find_reachable_in_fa_from_any(
 
 
 def find_reachable_in_fa_from_each(
-    db_fa: EpsilonNFA, query_fa: EpsilonNFA, db_start_states: Iterable[Any]
+    db_fa: EpsilonNFA, regex: str, db_start_states: Iterable[Any]
 ) -> Dict[Any, Set[Any]]:
+    """
+    Execute query regex to finite automaton.
+    Return dict of all reachable states from each of given db_start_states.
+    """
     return {
-        start: find_reachable_in_fa_from_any(db_fa, query_fa, [start])
+        start: find_reachable_in_fa_from_any(db_fa, regex, [start])
         for start in db_start_states
     }
 
@@ -215,9 +224,12 @@ def find_reachable_in_graph_from_any(
     db_start_states: Iterable[Any],
     db_final_states: Iterable[Any],
 ) -> Set[Any]:
+    """
+    Execute query regex to graph.
+    Return all reachable states from given db_start_states.
+    """
     db_fa = convert_nx_graph_to_nfa(db_graph)
-    query_fa = build_min_dfa_from_regex(regex)
-    states = find_reachable_in_fa_from_any(db_fa, query_fa, db_start_states)
+    states = find_reachable_in_fa_from_any(db_fa, regex, db_start_states)
     return states.intersection(set(db_final_states))
 
 
@@ -227,8 +239,11 @@ def find_reachable_in_graph_from_each(
     db_start_states: Iterable[Any],
     db_final_states: Iterable[Any],
 ) -> Dict[Any, Set[Any]]:
+    """
+    Execute query regex to graph.
+    Return dict of all reachable states from each of given db_start_states.
+    """
     db_fa = convert_nx_graph_to_nfa(db_graph)
-    query_fa = build_min_dfa_from_regex(regex)
-    res = find_reachable_in_fa_from_each(db_fa, query_fa, db_start_states)
+    res = find_reachable_in_fa_from_each(db_fa, regex, db_start_states)
     final_set = set(db_final_states)
     return {start: states.intersection(final_set) for start, states in res.items()}
