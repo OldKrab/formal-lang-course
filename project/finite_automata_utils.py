@@ -42,9 +42,14 @@ def convert_nx_graph_to_nfa(
     return nfa
 
 
-def _get_bool_matrices_for_fa(
+def get_bool_matrices_for_fa(
     fa: EpsilonNFA,
 ) -> Tuple[Dict[Symbol, csr_matrix], Dict[State, int]]:
+    """
+    Get bool matrices for finite automaton
+    Return matrices for every symbol and indexes of every state
+    """
+
     def get_bool_matrix(n):
         return csr_matrix((n, n), dtype=np.bool_)
 
@@ -57,8 +62,8 @@ def _get_bool_matrices_for_fa(
 
 
 def _intersect_matrices(lhs_fa, rhs_fa):
-    lhs_matrices, _ = _get_bool_matrices_for_fa(lhs_fa)
-    rhs_matrices, _ = _get_bool_matrices_for_fa(rhs_fa)
+    lhs_matrices, _ = get_bool_matrices_for_fa(lhs_fa)
+    rhs_matrices, _ = get_bool_matrices_for_fa(rhs_fa)
     symbols = lhs_fa.symbols.intersection(rhs_fa.symbols)
     matrices = {symb: kron(lhs_matrices[symb], rhs_matrices[symb]) for symb in symbols}
 
@@ -154,8 +159,8 @@ def find_reachable_in_fa_from_any(
     Return all reachable states from given db_start_states.
     """
     query_fa = build_min_dfa_from_regex(regex)
-    db_matrices, db_state_idx = _get_bool_matrices_for_fa(db_fa)
-    query_matrices, query_state_idx = _get_bool_matrices_for_fa(query_fa)
+    db_matrices, db_state_idx = get_bool_matrices_for_fa(db_fa)
+    query_matrices, query_state_idx = get_bool_matrices_for_fa(query_fa)
     db_cnt = len(db_fa.states)
     query_cnt = len(query_fa.states)
 
