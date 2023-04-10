@@ -1,12 +1,9 @@
 import os
-from pyformlang.cfg import CFG, Terminal, Variable
-from pyformlang.finite_automaton import EpsilonNFA
+from pyformlang.cfg import Variable
 from pyformlang.regular_expression import Regex
-from sympy.abc import V
 from project.ecfg import ECFG
 from project.rfa import RFA
 from tests.ecfg.test_creation import (
-    assert_ecfg_equals_to_default,
     default_cfg,
     default_file_name,
     default_text,

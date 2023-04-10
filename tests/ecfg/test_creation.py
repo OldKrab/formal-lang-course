@@ -1,7 +1,6 @@
 import os
 from pyformlang.cfg import CFG, Terminal, Variable
 from pyformlang.regular_expression import Regex
-from sympy.abc import V
 from project.ecfg import ECFG
 
 
