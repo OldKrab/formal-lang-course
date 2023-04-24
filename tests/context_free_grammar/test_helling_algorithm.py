@@ -1,7 +1,7 @@
 import networkx as nx
 from pyformlang.cfg import CFG, Variable
 
-from project.context_free_grammar import helling_algorithm, helling_algorithm_for_wcnf
+from project.cfpq import helling
 
 
 def test_simple():
@@ -25,7 +25,7 @@ def test_simple():
         (1, Variable("S1"), 3),
         (0, Variable("S"), 3),
     }
-    res = helling_algorithm_for_wcnf(gr, cfg)
+    res = helling(gr, cfg)
     assert expected == res
 
 
@@ -42,7 +42,7 @@ def test_extra_graph():
     )
 
     expected = {(1, Variable("B"), 2), (2, Variable("C"), 3), (1, Variable("S"), 3)}
-    res = helling_algorithm_for_wcnf(gr, cfg)
+    res = helling(gr, cfg)
     assert expected == res
 
 
@@ -57,7 +57,7 @@ def test_extra_query():
     )
 
     expected = {(1, Variable("B"), 2)}
-    res = helling_algorithm_for_wcnf(gr, cfg)
+    res = helling(gr, cfg)
     assert expected == res
 
 
@@ -76,5 +76,5 @@ def test_with_start_final_and_var():
     )
 
     expected = {(0, Variable("S"), 3)}
-    res = helling_algorithm(gr, cfg, {0}, {3}, Variable("S"))
+    res = helling(gr, cfg, {0}, {3}, Variable("S"))
     assert expected == res
