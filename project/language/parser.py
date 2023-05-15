@@ -1,4 +1,3 @@
-from typing_extensions import override
 from antlr4 import (
     CommonTokenStream,
     InputStream,
