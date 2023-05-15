@@ -14,5 +14,6 @@ if __name__ == "__main__":
             "antlr_generated",
             "-visitor",
             shared.LANGUAGE_GRAMMAR,
-        ]
+        ],
+        encoding="utf-8",
     )
