@@ -1,5 +1,10 @@
 from typing_extensions import override
-from antlr4 import CommonTokenStream, InputStream, FileStream, StdinStream, ParseTreeVisitor, RuleContext, RuleNode
+from antlr4 import (
+    CommonTokenStream,
+    InputStream,
+    FileStream,
+    StdinStream,
+)
 from antlr4.error.Errors import ParseCancellationException
 from antlr4.error.ErrorListener import ErrorListener
 from gi import overrides
@@ -52,15 +57,19 @@ class _ToDotVisitor(LanguageVisitor):
         self._node_number += 1
         return self._node_number
 
-    def _get_node_name(self, rule_number: int):
-        return f"{LanguageParser.ruleNames[rule_number]}_{self.next_node_number()}"
+    def _get_node_name(self, name: str):
+        return f"{name}_{self.next_node_number()}"
+
+    def _get_rule_node_name(self, rule_number: int):
+        return self._get_node_name(LanguageParser.ruleNames[rule_number])
 
     def _add_link(self, par, child):
         self._graph.add_edge(par, child)
 
         # Visit a parse tree produced by LanguageParser#program.
+
     def visitProgram(self, ctx: LanguageParser.ProgramContext):
-        node = self._get_node_name(LanguageParser.RULE_program)
+        node = self._get_rule_node_name(LanguageParser.RULE_program)
         for stat in ctx.statements:
             child = stat.accept(self)
             self._graph.add_edge(node, child)
@@ -68,14 +77,14 @@ class _ToDotVisitor(LanguageVisitor):
 
     # Visit a parse tree produced by LanguageParser#bind.
     def visitBind(self, ctx: LanguageParser.BindContext):
-        node = self._get_node_name(LanguageParser.RULE_bind)
+        node = self._get_rule_node_name(LanguageParser.RULE_bind)
         self._add_link(node, ctx.var().accept(self))
         self._add_link(node, ctx.expr().accept(self))
         return node
 
     # Visit a parse tree produced by LanguageParser#print.
     def visitPrint(self, ctx: LanguageParser.PrintContext):
-        node = self._get_node_name(LanguageParser.RULE_print)
+        node = self._get_rule_node_name(LanguageParser.RULE_print)
         self._add_link(node, ctx.expr().accept(self))
         return node
 

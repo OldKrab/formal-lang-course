@@ -27,11 +27,11 @@ jobs:
           python -m pip install --upgrade pip wheel setuptools
           python -m pip install -r requirements.txt
           python -m pip list
-     
+
       - name: Generate antlr4
         run: |
           python ./scripts/generate_antlr.py
-      
+
       - name: Test with pytest
         run: |
           python ./scripts/run_tests.py
