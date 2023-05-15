@@ -7,7 +7,6 @@ from antlr4 import (
 )
 from antlr4.error.Errors import ParseCancellationException
 from antlr4.error.ErrorListener import ErrorListener
-from gi import overrides
 from networkx import MultiDiGraph
 from networkx.drawing import nx_pydot
 from project.language.antlr_generated.LanguageLexer import LanguageLexer
