@@ -1,37 +1,38 @@
 grammar Language;
 
-program: statements += statement? ('\n'+ statements += statement?)* EOF;
+program: statement? ('\n'+ statement?)* EOF;
 statement: bind | print;
 
 bind: 'ПУСТЬ' var '=' expr;
 print: 'ВЫВЕСТИ' expr;
 
 expr:
-	'(' expr ')'																	# brackets_expr
-	| var																			# var_expr
-	| val																			# val_expr
-	| lambda																		# lambda_expr
-	| 'УСТАНОВИТЬ' what = expr 'КАК' ('СТАРТОВЫЕ' | 'ФИНАЛЬНЫЕ') 'ДЛЯ' for = expr	# set_expr
-	| 'ДОБАВИТЬ' expr 'К' 'СТАРТОВЫМ' 'ДЛЯ' expr									# add_start_expr
-	| 'ДОБАВИТЬ' expr 'К' 'ФИНАЛЬНЫМ' 'ДЛЯ' expr									# add_final_expr
-	| 'СТАРТОВЫЕ' 'ИЗ' expr															# start_from_expr
-	| 'ФИНАЛЬНЫЕ' 'ИЗ' expr															# final_from_expr
-	| 'ВЕРШИНЫ' 'ИЗ' expr															# vertexes_from_expr
-	| 'РЕБРА' 'ИЗ' expr																# edges_from_expr
-	| 'МЕТКИ' 'ИЗ' expr																# labels_from_expr
-	| 'ДОСТИЖИМЫЕ' 'ИЗ' expr														# reach_from_expr
-	| 'ОТОБРАЗИТЬ' lambda expr														# map_expr
-	| 'ФИЛЬТРОВАТЬ' lambda expr														# filter_expr
-	| 'ЗАГРУЗИТЬ' expr																# load_expr
-	| expr 'И' expr																	# intersect_expr
-	| expr '++' expr																# concat_expr
-	| expr 'ИЛИ' expr																# union_expr
-	| expr '*'																		# klein_expr
-	| expr 'ПРИНАДЛЕЖИТ' expr														# in_set_expr
-	| expr 'ПОДМНОЖЕСТВО' 'ДЛЯ' expr												# subset_expr
-	| expr '==' expr																# equal_expr
-	| expr '!=' expr																# notequal_expr
-	| 'НЕ' expr																		# not_expr;
+	'(' expr ')'													# brackets_expr
+	| var															# var_expr
+	| val															# val_expr
+	| lambda														# lambda_expr
+	| 'УСТАНОВИТЬ' what = expr 'КАК' 'СТАРТОВЫЕ' 'ДЛЯ' for = expr	# set_start_expr
+	| 'УСТАНОВИТЬ' what = expr 'КАК' 'ФИНАЛЬНЫЕ' 'ДЛЯ' for = expr	# set_final_expr
+	| 'ДОБАВИТЬ' what = expr 'К' 'СТАРТОВЫМ' 'ДЛЯ' for = expr		# add_start_expr
+	| 'ДОБАВИТЬ' what = expr 'К' 'ФИНАЛЬНЫМ' 'ДЛЯ' for = expr		# add_final_expr
+	| 'СТАРТОВЫЕ' 'ИЗ' expr											# start_from_expr
+	| 'ФИНАЛЬНЫЕ' 'ИЗ' expr											# final_from_expr
+	| 'ВЕРШИНЫ' 'ИЗ' expr											# vertexes_from_expr
+	| 'РЕБРА' 'ИЗ' expr												# edges_from_expr
+	| 'МЕТКИ' 'ИЗ' expr												# labels_from_expr
+	| 'ДОСТИЖИМЫЕ' 'ИЗ' expr										# reach_from_expr
+	| 'ОТОБРАЗИТЬ' with = expr what = expr							# map_expr
+	| 'ФИЛЬТРОВАТЬ' with = expr what = expr							# filter_expr
+	| 'ЗАГРУЗИТЬ' expr												# load_expr
+	| expr 'И' expr													# intersect_expr
+	| expr '++' expr												# concat_expr
+	| expr 'ИЛИ' expr												# union_expr
+	| expr '==' expr												# equal_expr
+	| expr '!=' expr												# notequal_expr
+	| 'НЕ' expr														# not_expr
+	| expr '*'														# klein_expr
+	| what = expr 'ПРИНАДЛЕЖИТ' to = expr							# in_set_expr
+	| what = expr 'ПОДМНОЖЕСТВО' 'ДЛЯ' of = expr					# subset_expr;
 
 lambda: patterns '->' expr;
 patterns: pattern (',' pattern)*;
@@ -40,7 +41,7 @@ tuple_pattern: '(' pattern (',' pattern)* ')';
 
 var: ID;
 val: simple_val | set_val | tuple_val;
-simple_val: INT | STR;
+simple_val: INT # int_val | STR # str_val;
 
 tuple_val: '(' expr (',' expr)+ ')';
 
