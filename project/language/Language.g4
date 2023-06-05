@@ -9,6 +9,8 @@ print: 'ВЫВЕСТИ' expr;
 expr:
 	'(' expr ')'													# brackets_expr
 	| var															# var_expr
+	| 'КА' 'ИЗ' expr												# fa_expr
+	| 'РКА' 'ИЗ' expr												# rsm_expr
 	| val															# val_expr
 	| lambda														# lambda_expr
 	| 'УСТАНОВИТЬ' what = expr 'КАК' 'СТАРТОВЫЕ' 'ДЛЯ' for = expr	# set_start_expr

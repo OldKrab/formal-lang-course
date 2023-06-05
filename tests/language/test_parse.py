@@ -36,6 +36,15 @@ def test_load():
     )
 
 
+def test_fa_and_rsm():
+    assert_complete(
+        [
+            'ПУСТЬ x = КА ИЗ "hello"',
+            "ПУСТЬ y = РКА ИЗ x",
+        ]
+    )
+
+
 def test_bind():
     assert_complete(
         [
