@@ -1,9 +1,9 @@
 antlr4-python3-runtime
 antlr4-tools
+pygraphviz
 black
 cfpq-data
 pre-commit
 pydot
-pygraphviz
 pytest
 scipy
