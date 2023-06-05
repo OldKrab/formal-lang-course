@@ -37,7 +37,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install Graphviz
+        uses: ts-graphviz/setup-graphviz@v1
       # Install requirements
+
       - name: Install requirements
 
         # Runs command-line programs using the operating system's shell
