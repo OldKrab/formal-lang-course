@@ -46,7 +46,7 @@ def test_simple_print():
         ]
     )
 
-    assert_throw(['ВЫВЕСТИ КА ИЗ "x"' 'ВЫВЕСТИ РКА ИЗ КА ИЗ "x"'])
+    assert_throw(['ВЫВЕСТИ КА ИЗ "x"', 'ВЫВЕСТИ РКА ИЗ КА ИЗ "x"'])
 
 
 def test_load():

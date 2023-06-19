@@ -26,15 +26,33 @@ from project.finite_automata_utils import (
 from project.language.antlr_generated.LanguageLexer import LanguageLexer
 from project.language.antlr_generated.LanguageParser import LanguageParser
 from project.language.antlr_generated.LanguageVisitor import LanguageVisitor
-from project.language.parser import check_syntax, get_parse_tree
+from project.language.parser import (
+    check_syntax,
+    get_parse_tree,
+    get_parse_tree_from_file,
+)
 from project.rsm import RSM
 
 
-def interpret(code: str):
+def _interpret(tree_creator):
     vis = _InterpreterVisitor()
-    tree = get_parse_tree(code)
+    tree = tree_creator()
     tree.accept(vis)
     return vis.output
+
+
+def interpret(code: str):
+    """
+    Interprets the given code string and returns the output as a string.
+    """
+    return _interpret(lambda: get_parse_tree(code))
+
+
+def interpret_file(file: str):
+    """
+    Interprets the code in the specified file and returns the output as a string.
+    """
+    return _interpret(lambda: get_parse_tree_from_file(file))
 
 
 @dataclass

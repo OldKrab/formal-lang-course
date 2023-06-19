@@ -22,7 +22,7 @@ def get_parse_tree_from_file(file_name: str) -> LanguageParser.ProgramContext:
     Returns the parse tree of a program read from a file.
     The `file_name` parameter should be the name of the file containing the program code.
     """
-    return _get_parse_tree(FileStream(file_name))
+    return _get_parse_tree(FileStream(file_name, encoding="utf8"))
 
 
 def get_parse_tree_from_console() -> LanguageParser.ProgramContext:
