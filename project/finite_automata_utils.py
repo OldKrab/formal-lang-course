@@ -1,5 +1,6 @@
 from functools import reduce
 from typing import Any, Iterable, Union, Dict, Tuple, Set
+from pyformlang.cfg import Epsilon
 from pyformlang.finite_automaton import (
     FiniteAutomaton,
     NondeterministicFiniteAutomaton,
@@ -42,6 +43,75 @@ def convert_nx_graph_to_nfa(
     return nfa
 
 
+def get_edges_of_fa(fa: EpsilonNFA) -> set:
+    """
+    Return edges of FA
+    """
+    return {(frm.value, symb.value, to.value) for frm, symb, to in fa}
+
+
+def get_states_of_fa(fa: EpsilonNFA) -> set:
+    """
+    Return states of FA
+    """
+    return {st.value for st in fa.states}
+
+
+def get_start_states_of_fa(fa: EpsilonNFA) -> set:
+    """
+    Return start states of FA
+    """
+    return {st.value for st in fa.start_states}
+
+
+def get_final_states_of_fa(fa: EpsilonNFA) -> set:
+    """
+    Return final states of FA
+    """
+    return {st.value for st in fa.final_states}
+
+
+def get_labels_of_fa(fa: EpsilonNFA) -> set:
+    """
+    Return labels of FA
+    """
+    return {symb.value for frm, symb, to in fa}
+
+
+def set_starts_of_fa(symbols: set, fa: EpsilonNFA):
+    """
+    Set starts symbols of FA
+    """
+    fa._start_state = set()
+    for s in symbols:
+        fa.add_start_state(s)
+
+
+def set_finals_of_fa(symbols: set, fa: EpsilonNFA):
+    """
+    Set finals symbols of FA
+    """
+    fa._final_states = set()
+    for s in symbols:
+        fa.add_final_state(s)
+
+
+def add_starts_to_fa(symbols: set, fa: EpsilonNFA):
+    """
+    Add starts symbols to FA
+    """
+    for s in symbols:
+        fa.add_start_state(s)
+
+
+def add_finals_to_fa(symbols: set, fa: EpsilonNFA):
+    """
+    Add finals symbols to FA
+    """
+    for s in symbols:
+        fa.add_final_state(s)
+
+
 def get_bool_matrices_for_fa(
     fa: EpsilonNFA,
 ) -> Tuple[Dict[Symbol, csr_matrix], Dict[State, int]]:
@@ -68,13 +138,69 @@ def _intersect_matrices(lhs_fa, rhs_fa):
     matrices = {symb: kron(lhs_matrices[symb], rhs_matrices[symb]) for symb in symbols}
 
     def get_pairs_states(lhs_states, rhs_states):
-        return [State((lhs_s, rhs_s)) for lhs_s in lhs_states for rhs_s in rhs_states]
+        return [
+            State((lhs_s.value, rhs_s.value))
+            for lhs_s in lhs_states
+            for rhs_s in rhs_states
+        ]
 
     states = get_pairs_states(lhs_fa.states, rhs_fa.states)
     start_states = get_pairs_states(lhs_fa.start_states, rhs_fa.start_states)
     final_states = get_pairs_states(lhs_fa.final_states, rhs_fa.final_states)
 
     return matrices, states, start_states, final_states
+
+
+def union_of_two_fa(lhs_fa: EpsilonNFA, rhs_fa: EpsilonNFA) -> EpsilonNFA:
+    """
+    Union one EpsilonNFA with the other.
+    The result is EpsilonNFA that accepts words that accept one of original NFA's.
+    """
+    fa = EpsilonNFA()
+
+    for fro, symb, to in lhs_fa:
+        fa.add_transition(fro.value, symb, to.value)
+
+    for fro, symb, to in rhs_fa:
+        fa.add_transition(fro.value, symb, to.value)
+
+    for node in lhs_fa.start_states:
+        fa.add_start_state(node.value)
+
+    for node in rhs_fa.start_states:
+        fa.add_start_state(node.value)
+
+    for node in lhs_fa.final_states:
+        fa.add_final_state(node.value)
+
+    for node in rhs_fa.final_states:
+        fa.add_final_state(node.value)
+
+    return fa
+
+
+def concat_of_two_fa(lhs_fa: EpsilonNFA, rhs_fa: EpsilonNFA) -> EpsilonNFA:
+    """
+    Concat one EpsilonNFA with the other.
+    """
+    fa = EpsilonNFA()
+
+    for fro, symb, to in lhs_fa:
+        fa.add_transition(fro.value, symb, to.value)
+
+    for fro, symb, to in rhs_fa:
+        fa.add_transition(fro.value, symb, to.value)
+
+    for node in lhs_fa.start_states:
+        fa.add_start_state(node.value)
+
+        for node2 in rhs_fa.final_states:
+            fa.add_transition(node.value, Epsilon(), node2.value)
+
+    for node in rhs_fa.final_states:
+        fa.add_final_state(node.value)
+
+    return fa
 
 
 def intersect_two_fa(lhs_fa: EpsilonNFA, rhs_fa: EpsilonNFA) -> EpsilonNFA:
@@ -152,12 +278,14 @@ def query_regex_to_fa_with_states(
 
 
 def find_reachable_in_fa_from_any(
-    db_fa: EpsilonNFA, regex: str, db_start_states: Iterable[Any]
+    db_fa: EpsilonNFA, regex: str, db_start_states: Iterable[Any] = None
 ) -> Set[Any]:
     """
     Execute query regex to finite automaton.
     Return all reachable states from given db_start_states.
     """
+    if db_start_states is None:
+        db_start_states = db_fa.start_states
     query_fa = build_min_dfa_from_regex(regex)
     db_matrices, db_state_idx = get_bool_matrices_for_fa(db_fa)
     query_matrices, query_state_idx = get_bool_matrices_for_fa(query_fa)
@@ -206,17 +334,18 @@ def find_reachable_in_fa_from_any(
         j = query_state_idx[q_f]
         for i in range(db_cnt):
             if reachable[i, j]:
-                res.add(db_states[i])
+                res.add(db_states[i].value)
     return res
 
 
 def find_reachable_in_fa_from_each(
-    db_fa: EpsilonNFA, regex: str, db_start_states: Iterable[Any]
+    db_fa: EpsilonNFA, regex: str, db_start_states: Union[Iterable[Any], None]
 ) -> Dict[Any, Set[Any]]:
     """
     Execute query regex to finite automaton.
     Return dict of all reachable states from each of given db_start_states.
     """
+
     return {
         start: find_reachable_in_fa_from_any(db_fa, regex, [start])
         for start in db_start_states
