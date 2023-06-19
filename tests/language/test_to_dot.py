@@ -72,7 +72,7 @@ def test_with_brackets():
 
 
 def test_exprs():
-    text = 'ВЫВЕСТИ ({42*, "str"}, 1 == 1, 1 != 1, 1 ИЛИ 1, 1 И 1, 1 ПРИНАДЛЕЖИТ 1, 1 ПОДМНОЖЕСТВО ДЛЯ 1, НЕ 1, {1..1})'
+    text = 'ВЫВЕСТИ ({42*, "str"}, 1 == 1, 1 ИЛИ 1, 1 И 1, 1 ПРИНАДЛЕЖИТ 1, 1 ПОДМНОЖЕСТВО ДЛЯ 1, НЕ 1, {1..1})'
     test_file = "test.dot"
     expected_graph = MultiDiGraph(
         [
@@ -85,25 +85,22 @@ def test_exprs():
             ("tuple_val_3", "equal_expr_8", "0"),
             ("equal_expr_8", "int_val_9", "0"),
             ("equal_expr_8", "int_val_10", "0"),
-            ("tuple_val_3", "notequal_expr_11", "0"),
-            ("notequal_expr_11", "int_val_12", "0"),
-            ("notequal_expr_11", "int_val_13", "0"),
-            ("tuple_val_3", "union_expr_14", "0"),
-            ("union_expr_14", "int_val_15", "0"),
-            ("union_expr_14", "int_val_16", "0"),
-            ("tuple_val_3", "intersect_expr_17", "0"),
-            ("intersect_expr_17", "int_val_18", "0"),
-            ("intersect_expr_17", "int_val_19", "0"),
-            ("tuple_val_3", "in_set_expr_20", "0"),
-            ("in_set_expr_20", "int_val_21", "0"),
-            ("in_set_expr_20", "int_val_22", "0"),
-            ("tuple_val_3", "subset_expr_23", "0"),
-            ("subset_expr_23", "int_val_24", "0"),
-            ("subset_expr_23", "int_val_25", "0"),
-            ("tuple_val_3", "not_expr_26", "0"),
-            ("not_expr_26", "int_val_27", "0"),
-            ("tuple_val_3", "set_val_28", "0"),
-            ("set_val_28", "set_interval_29", "0"),
+            ("tuple_val_3", "union_expr_11", "0"),
+            ("union_expr_11", "int_val_12", "0"),
+            ("union_expr_11", "int_val_13", "0"),
+            ("tuple_val_3", "intersect_expr_14", "0"),
+            ("intersect_expr_14", "int_val_15", "0"),
+            ("intersect_expr_14", "int_val_16", "0"),
+            ("tuple_val_3", "in_set_expr_17", "0"),
+            ("in_set_expr_17", "int_val_18", "0"),
+            ("in_set_expr_17", "int_val_19", "0"),
+            ("tuple_val_3", "subset_expr_20", "0"),
+            ("subset_expr_20", "int_val_21", "0"),
+            ("subset_expr_20", "int_val_22", "0"),
+            ("tuple_val_3", "not_expr_23", "0"),
+            ("not_expr_23", "int_val_24", "0"),
+            ("tuple_val_3", "set_val_25", "0"),
+            ("set_val_25", "set_interval_26", "0"),
         ]
     )
     to_dot(text, test_file)
@@ -113,24 +110,20 @@ def test_exprs():
 
 
 def test_lambda():
-    text = "ВЫВЕСТИ x, (x, x) -> 1"
+    text = "ВЫВЕСТИ x -> 1"
     test_file = "test.dot"
     expected_graph = MultiDiGraph(
         [
             ("program_1", "print_2", "0"),
             ("print_2", "lambda_expr_3", "0"),
-            ("lambda_expr_3", "patterns_4", "0"),
-            ("patterns_4", "var_5", "0"),
-            ("patterns_4", "tuple_pattern_6", "0"),
-            ("tuple_pattern_6", "var_7", "0"),
-            ("tuple_pattern_6", "var_8", "0"),
-            ("lambda_expr_3", "int_val_9", "0"),
+            ("lambda_expr_3", "var_4", "0"),
+            ("lambda_expr_3", "int_val_5", "0"),
         ]
     )
     to_dot(text, test_file)
     result_graph = nx_agraph.read_dot(test_file)
-    assert set(expected_graph.nodes) == set(result_graph.nodes)
     assert set(expected_graph.edges) == set(result_graph.edges)
+    assert set(expected_graph.nodes) == set(result_graph.nodes)
 
 
 def test_set():
@@ -172,9 +165,7 @@ def test_add():
 
 
 def test_from():
-    text = (
-        "ВЫВЕСТИ СТАРТОВЫЕ ИЗ ФИНАЛЬНЫЕ ИЗ ВЕРШИНЫ ИЗ РЕБРА ИЗ МЕТКИ ИЗ ДОСТИЖИМЫЕ ИЗ x"
-    )
+    text = "ВЫВЕСТИ СТАРТОВЫЕ ИЗ ФИНАЛЬНЫЕ ИЗ ВЕРШИНЫ ИЗ РЕБРА ИЗ МЕТКИ ИЗ x"
     test_file = "test.dot"
     expected_graph = MultiDiGraph(
         [
@@ -184,8 +175,7 @@ def test_from():
             ("final_from_expr_4", "vertexes_from_expr_5", "0"),
             ("vertexes_from_expr_5", "edges_from_expr_6", "0"),
             ("edges_from_expr_6", "labels_from_expr_7", "0"),
-            ("labels_from_expr_7", "reach_from_expr_8", "0"),
-            ("reach_from_expr_8", "var_9", "0"),
+            ("labels_from_expr_7", "var_8", "0"),
         ]
     )
     to_dot(text, test_file)

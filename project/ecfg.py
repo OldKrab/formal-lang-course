@@ -15,7 +15,9 @@ class ECFG:
         """
         Create ECFG from pyformlang CFG
         """
-        return ECFG.from_text(cfg.to_text())
+        res = ECFG.from_text(cfg.to_text())
+        res.start_symbol = cfg.start_symbol
+        return res
 
     @staticmethod
     def from_text(text: str) -> "ECFG":

@@ -1,6 +1,15 @@
+import os
 import pytest
 from project.language.parser import check_syntax
 from antlr4.error.Errors import ParseCancellationException
+
+
+@pytest.fixture(autouse=True)
+def run_around_tests():
+    assert True
+    yield
+    if os.path.isfile("test.dot"):
+        os.remove("test.dot")
 
 
 def assert_complete(strings):
@@ -32,6 +41,15 @@ def test_load():
         [
             "ПУСТЬ x = ЗАГРУЗИТЬ",
             'ПУСТЬ x = ЗАГРУЗИТЬ ИЗ "a"',
+        ]
+    )
+
+
+def test_fa_and_rsm():
+    assert_complete(
+        [
+            'ПУСТЬ x = КА ИЗ "hello"',
+            "ПУСТЬ y = РКА ИЗ x",
         ]
     )
 
@@ -107,17 +125,14 @@ def test_print():
 def test_lambda_expr():
     assert_complete(
         [
-            "ПУСТЬ f = (x) -> x И x",
+            "ПУСТЬ f = x -> x И x",
             "ПУСТЬ f = y -> z -> y == z",
-            "ПУСТЬ f = (x, y, z) -> {(x, y), z}",
-            "ПУСТЬ f = h -> (d, e) -> (h, d, e)",
-            "ПУСТЬ f = (a, b) -> (a ++ b, a ИЛИ b)",
-            "ПУСТЬ f = y, x, z -> y == z",
         ]
     )
     assert_throw(
         [
             "ПУСТЬ f = y x z -> y == z",
+            "ПУСТЬ f = y, x, z -> y == z",
             "ПУСТЬ f = -> x",
         ]
     )
@@ -178,7 +193,7 @@ def test_from_expr():
             'ПУСТЬ x = ВЕРШИНЫ ИЗ ЗАГРУЗИТЬ "graph.dot"',
             'ПУСТЬ x = РЕБРА ИЗ ЗАГРУЗИТЬ "graph.dot"',
             'ПУСТЬ x = МЕТКИ ИЗ (1, 2, "three")',
-            "ПУСТЬ x = ДОСТИЖИМЫЕ ИЗ (1, (2, 3), (4, (5, 6)))",
+            "ПУСТЬ x = ДОСТИЖИМЫЕ ИЗ (1, (2, 3), (4, (5, 6))) С ОГРАНИЧЕНИЯМИ y",
         ]
     )
     assert_throw(
@@ -206,7 +221,6 @@ def test_operations():
             "ПУСТЬ x = {1} ПОДМНОЖЕСТВО ДЛЯ {1, 2, 3}",
             "ПУСТЬ x = НЕ (x == y)",
             "ПУСТЬ x = НЕ НЕ (x == y)",
-            "ПУСТЬ x = (x != y)",
         ]
     )
     assert_throw(
@@ -255,7 +269,6 @@ def test_set_val_expr():
             "ПУСТЬ x = {1, 2, 3" "ПУСТЬ x = {1, 2, 3,}",
             "ПУСТЬ x = {}}",
             "ПУСТЬ x = {{}",
-            "ПУСТЬ x = {{1, 2}, {}}",
             "ПУСТЬ x = {2..5..2}",
             "ПУСТЬ x = {5..}",
         ]

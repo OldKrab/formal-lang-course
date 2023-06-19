@@ -22,7 +22,7 @@ def get_parse_tree_from_file(file_name: str) -> LanguageParser.ProgramContext:
     Returns the parse tree of a program read from a file.
     The `file_name` parameter should be the name of the file containing the program code.
     """
-    return _get_parse_tree(FileStream(file_name))
+    return _get_parse_tree(FileStream(file_name, encoding="utf8"))
 
 
 def get_parse_tree_from_console() -> LanguageParser.ProgramContext:
@@ -141,7 +141,7 @@ class _ToDotVisitor(LanguageVisitor):
         return self._visit_binary_expr(
             ctx,
             LanguageParser.RULE_bind,
-            lhs=ctx.var(),
+            lhs=ctx.var_decl(),
             rhs=ctx.expr(),
             lhsLabel="var",
             rhsLabel="expr",
@@ -150,6 +150,10 @@ class _ToDotVisitor(LanguageVisitor):
     # Visit a parse tree produced by LanguageParser#print.
     def visitPrint(self, ctx: LanguageParser.PrintContext):
         return self._visit_unary_expr(ctx, LanguageParser.RULE_print)
+
+    # Visit a parse tree produced by LanguageParser#var_decl.
+    def visitVar_decl(self, ctx: LanguageParser.Var_declContext):
+        return self._get_node("var")
 
     # Visit a parse tree produced by LanguageParser#brackets_expr.
     def visitBrackets_expr(self, ctx: LanguageParser.Brackets_exprContext):
@@ -251,10 +255,6 @@ class _ToDotVisitor(LanguageVisitor):
     def visitEqual_expr(self, ctx: LanguageParser.Equal_exprContext):
         return self._visit_binary_expr(ctx, "equal_expr")
 
-    # Visit a parse tree produced by LanguageParser#notequal_expr.
-    def visitNotequal_expr(self, ctx: LanguageParser.Notequal_exprContext):
-        return self._visit_binary_expr(ctx, "notequal_expr")
-
     # Visit a parse tree produced by LanguageParser#not_expr.
     def visitNot_expr(self, ctx: LanguageParser.Not_exprContext):
         return self._visit_unary_expr(ctx, "not_expr")
@@ -285,19 +285,11 @@ class _ToDotVisitor(LanguageVisitor):
         return self._visit_binary_expr(
             ctx,
             "lambda_expr",
-            lhs=ctx.patterns(),
+            lhs=ctx.var_decl(),
             rhs=ctx.expr(),
             lhsLabel="args",
             rhsLabel="body",
         )
-
-    # Visit a parse tree produced by LanguageParser#patterns.
-    def visitPatterns(self, ctx: LanguageParser.PatternsContext):
-        return self._visit_children(ctx, "patterns", ctx.pattern())
-
-    # Visit a parse tree produced by LanguageParser#tuple_pattern.
-    def visitTuple_pattern(self, ctx: LanguageParser.Tuple_patternContext):
-        return self._visit_children(ctx, "tuple_pattern", ctx.pattern())
 
     # Visit a parse tree produced by LanguageParser#var.
     def visitVar(self, ctx: LanguageParser.VarContext):
